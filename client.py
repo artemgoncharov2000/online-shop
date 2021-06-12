@@ -162,12 +162,13 @@ class App:
                 except Exception:
                     print('Не удалось удалить позицию из заказа, попробуйте еще раз!')
             elif response == 'pay' and order.status != 'Оплачен':
-                if self.check_items(order):
-                    try:
-                        update_order(order.id, 'Оплачен')
-                        print("Заказ успешно оплачен!")
-                    except Exception as e:
-                        print("Не удалось оплатить заказ. Попробуйте еще раз!")
+                try:
+                    if not self.check_items(order):
+                        raise Exception('Недостаточно товаров на складе. Уменьшите количество товаром!')
+                    update_order(order.id, 'Оплачен')
+                    print("Заказ успешно оплачен!")
+                except Exception as e:
+                    print(e)
             elif response == "back":
                 break
 

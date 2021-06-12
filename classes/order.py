@@ -20,6 +20,7 @@ class Order:
         del self.positions[item_name]
 
     def print(self, catalog):
+        total = 0
         print()
         print("Заказ №: ", self.id)
         print("Создан: ", self.date_created)
@@ -32,5 +33,8 @@ class Order:
                 item = catalog.get_item(position[0])
                 item.print()
                 print("У вас в корзине: ", position[1])
+                total += item.count * position[1]
                 print()
+            print("Итого: ", total)
+            print()
 
