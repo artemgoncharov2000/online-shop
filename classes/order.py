@@ -24,10 +24,13 @@ class Order:
         print("Заказ №: ", self.id)
         print("Создан: ", self.date_created)
         print("Статус заказ: ", self.status)
-        print("Ваш заказ состоит из:")
-        for position in self.positions:
-            item = catalog.get_item(position[0])
-            item.print()
-            print("У вас в корзине: ", position[1])
-            print()
+        if len(self.positions) == 0:
+            print("Ваш заказ пуст. Перейдите в каталог, чтобы добавить товары в ваш заказ.")
+        else:
+            print("Ваш заказ состоит из:")
+            for position in self.positions:
+                item = catalog.get_item(position[0])
+                item.print()
+                print("У вас в корзине: ", position[1])
+                print()
 

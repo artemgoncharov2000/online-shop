@@ -6,6 +6,10 @@ from classes.item import Item
 from classes.order import Order
 from classes.user import User
 
+'''
+    Creates test data and writes it in database
+'''
+
 
 def create_data():
     db = sqlite3.connect('server.db')
@@ -64,6 +68,11 @@ def create_data():
     db.commit()
 
 
+'''
+    Returns all items
+'''
+
+
 def get_all_items():
     db = sqlite3.connect('server.db')
     sql = db.cursor()
@@ -72,6 +81,11 @@ def get_all_items():
         items.append(Item(item[0], item[1], item[2]))
 
     return items
+
+
+'''
+    Return user by user's login
+'''
 
 
 def get_user_by_login(login):
@@ -84,15 +98,25 @@ def get_user_by_login(login):
     return user
 
 
+'''
+    Returns order by user's login
+'''
+
+
 def get_orders_by_login(login):
     db = sqlite3.connect('server.db')
     sql = db.cursor()
     orders = []
     sql.execute(f"SELECT * FROM orders WHERE UserLogin='{login}'")
     for row in sql.fetchall():
-        positions = get_position_by_order(row[0])
+        positions = get_positions_by_order(row[0])
         orders.append(Order(row[0], row[1], row[2], positions))
     return orders
+
+
+'''
+    Checks if order id is unique 
+'''
 
 
 def check_unique(order_id):
@@ -101,6 +125,11 @@ def check_unique(order_id):
         if order.id == order_id:
             return False
     return True
+
+
+'''
+    Creates new order
+'''
 
 
 def create_order(login):
@@ -114,7 +143,12 @@ def create_order(login):
     db.commit()
 
 
-def get_position_by_order(order_id):
+'''
+    Returns all positions in order
+'''
+
+
+def get_positions_by_order(order_id):
     db = sqlite3.connect('server.db')
     sql = db.cursor()
     positions = []
@@ -124,6 +158,11 @@ def get_position_by_order(order_id):
     return positions
 
 
+'''
+    Deletes positions from order
+'''
+
+
 def del_pos_from_order(order_id, item_id):
     db = sqlite3.connect('server.db')
     sql = db.cursor()
@@ -131,11 +170,21 @@ def del_pos_from_order(order_id, item_id):
     db.commit()
 
 
+'''
+    Updates item 
+'''
+
+
 def update_item(item):
     db = sqlite3.connect('server.db')
     sql = db.cursor()
     sql.execute(f"UPDATE items SET Price={item.price}, Count={item.count} WHERE ItemId='{item.name}'")
     db.commit()
+
+
+'''
+    Returns item by item's name
+'''
 
 
 def get_item_by_id(item_id):
@@ -146,15 +195,25 @@ def get_item_by_id(item_id):
     return Item(item[0], item[1], item[2])
 
 
+'''
+    Returns all orders
+'''
+
+
 def get_all_orders():
     db = sqlite3.connect('server.db')
     sql = db.cursor()
     sql.execute("SELECT * FROM orders")
     orders = []
     for row in sql.fetchall():
-        positions = get_position_by_order(row[0])
+        positions = get_positions_by_order(row[0])
         orders.append(Order(row[0], row[1], row[2], positions))
     return orders
+
+
+'''
+    Returns order by order's id
+'''
 
 
 def get_order_by_id(order_id):
@@ -162,9 +221,14 @@ def get_order_by_id(order_id):
     sql = db.cursor()
     order = None
     for row in sql.execute(f"SELECT * FROM orders WHERE OrderId='{order_id}'"):
-        positions = get_position_by_order(row[0])
+        positions = get_positions_by_order(row[0])
         order = Order(row[0], row[1], row[2], positions)
     return order
+
+
+'''
+    Returns all order with status 'Оплачен'
+'''
 
 
 def get_open_orders():
@@ -173,9 +237,14 @@ def get_open_orders():
     sql.execute("SELECT * FROM orders WHERE Status='Оплачен'")
     orders = []
     for row in sql.fetchall():
-        positions = get_position_by_order(row[0])
+        positions = get_positions_by_order(row[0])
         orders.append(Order(row[0], row[1], row[2], positions))
     return orders
+
+
+'''
+    Adds new item to order
+'''
 
 
 def add_item_to_order(order_id, item_name, item_count):
@@ -185,8 +254,25 @@ def add_item_to_order(order_id, item_name, item_count):
     db.commit()
 
 
+'''
+    Updates order
+'''
+
+
 def update_order(order_id, status):
     db = sqlite3.connect('server.db')
     sql = db.cursor()
     sql.execute(f"UPDATE orders SET Status='{status}' WHERE OrderId='{order_id}'")
+    db.commit()
+
+
+'''
+    Updates position in order
+'''
+
+
+def update_position(order_id, item_id, count):
+    db = sqlite3.connect('server.db')
+    sql = db.cursor()
+    sql.execute(f"UPDATE order_items SET Count={count} WHERE OrderId='{order_id}' AND ItemId='{item_id}'")
     db.commit()
